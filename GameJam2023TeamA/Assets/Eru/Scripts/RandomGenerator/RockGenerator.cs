@@ -45,7 +45,7 @@ public class RockGenerator : MonoBehaviour
 
     private float centerPos,crPos,clPos;
 
-    private Vector3 genePos = new Vector3(0, 0.5f, 0);
+    private Vector3 genePos = new Vector3(0, 0.1f, 0);
 
     private int lastSelectedNumber = 0;
     private int[] allNumbers = { 1, 2, 3, 4 };
@@ -56,6 +56,7 @@ public class RockGenerator : MonoBehaviour
         clPos = (centerPos + leftBorder) / 2;
         crPos = (rightBorder + centerPos) / 2;
         genePos.z = startPos;
+        genePos.y = 0.1f;
         StartCoroutine(GeneRock());
     }
 
@@ -68,6 +69,7 @@ public class RockGenerator : MonoBehaviour
         else genePos.x = Random.Range(crPos, rightBorder);
 
         GameObject rock = Instantiate(RockObj, genePos, Quaternion.identity);
+        rock.transform.parent = this.transform;
         GimmickRock(rock);
 
         genePos.z += geneDis;
@@ -102,8 +104,8 @@ public class RockGenerator : MonoBehaviour
 
     private void IceGimmick(GameObject rock)
     {
-        rock.GetComponent<BoxCollider>().material = icePhysicMaterial;
-        rock.GetComponent<MeshRenderer>().material = iceMaterial;
+        rock.GetComponent<SphereCollider>().material = icePhysicMaterial;
+        rock.GetComponentInChildren<MeshRenderer>().material = iceMaterial;
         return;
     }
 
