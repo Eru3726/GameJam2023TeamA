@@ -28,6 +28,8 @@ public class IkuraController : MonoBehaviour
     private Transform NearStone=null;
     public float stonea;
 
+    [Tooltip("IkuraChanをアタッチ")]
+    [SerializeField] SphereCollider IkuraCol;
     private Rigidbody rb;
     private Animator animator;
     private int animeState=0;
@@ -108,7 +110,7 @@ public class IkuraController : MonoBehaviour
 
     private void AxisStandby()
     {
-        rb.velocity = Vector3.zero;
+        //rb.velocity = Vector3.zero;
         NowShotPower = 0;
         PowerBar.value = 0;
         leftButton.gameObject.SetActive(true);
@@ -189,6 +191,7 @@ public class IkuraController : MonoBehaviour
                 }
             }
         }
+        NearStone.position -= new Vector3(0, 0, 1);
         NowIkuraState = IkuraState.None;
         rb.velocity = Vector3.zero;
         yield return new WaitForSeconds(2f);
