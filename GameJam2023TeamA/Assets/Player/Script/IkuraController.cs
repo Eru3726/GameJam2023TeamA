@@ -14,9 +14,17 @@ public class IkuraController : MonoBehaviour
 
     [Tooltip("PowerBarをアタッチ")]
     [SerializeField] private Slider PowerBar;
-    [Min(0)] public float MaxShotPower;
+
+    [Tooltip("最大発射パワーの設定")]
+    [SerializeField][Min(0)] private float MaxShotPower;
     private float NowShotPower=0;
     public float RivarSpeed;
+
+    [Tooltip("DamageBarをアタッチ")]
+    [SerializeField] private Slider DamageBar;
+    [Tooltip("HPの最大値をアタッチ")]
+    [SerializeField][Min(1)]private float IkuraHP;
+    private float OldPosZ;
 
     private Rigidbody rb;
     public enum IkuraState
@@ -29,6 +37,8 @@ public class IkuraController : MonoBehaviour
     void Start()
     {
         NowIkuraState = IkuraState.Axis;
+        DamageBar.maxValue=IkuraHP;
+        DamageBar.value = IkuraHP;
         PowerBar.maxValue = MaxShotPower;
         rb = GetComponent<Rigidbody>();
     }
@@ -57,6 +67,7 @@ public class IkuraController : MonoBehaviour
 
     private void OnCollisionEnter(Collision col)
     {
+        IkuraDamage();
         AxisStandby();
     }
 
@@ -100,7 +111,17 @@ public class IkuraController : MonoBehaviour
     private void ShotIkura()
     {
         NowIkuraState = IkuraState.Move;
+        OldPosZ = transform.position.z;
         Vector3 ShotForce = new Vector3(ShotAxisValue*NowShotPower*1.5f, 0,0);
         rb.AddForce(ShotForce);
+    }
+
+    private void IkuraDamage()
+    {
+        float NewPosZ = transform.position.z;
+        float damagePersent= NewPosZ - OldPosZ;
+        float damage = IkuraHP / 100 * damagePersent;
+        DamageBar.value -= damage;
+        if (damage == 0) Debug.Log("GameOver");
     }
 }
