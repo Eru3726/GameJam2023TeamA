@@ -31,8 +31,16 @@ public class IkuraController : MonoBehaviour
     [Tooltip("IkuraChanをアタッチ")]
     [SerializeField] SphereCollider IkuraCol;
     private Rigidbody rb;
+
     private Animator animator;
     private int animeState=0;
+
+    [Tooltip("WouldCanvasをアタッチ")]
+    [SerializeField] private Canvas canvas;
+    [Tooltip("MainCameraをアタッチ")]
+    [SerializeField] private Camera mainCamera;
+    [Tooltip("BackCameraをアタッチ")]
+    [SerializeField] private Camera BackCamera;
     public enum IkuraState
     {
         None,
@@ -50,6 +58,7 @@ public class IkuraController : MonoBehaviour
         DamageBar.value = IkuraHP;
         PowerBar.maxValue = MaxShotPower;
         rb = GetComponent<Rigidbody>();
+        BackMonitorOff();
     }
 
     // Update is called once per frame
@@ -85,6 +94,7 @@ public class IkuraController : MonoBehaviour
             }
         }
 
+        
         if(Input.GetKeyDown(KeyCode.Return))
         {
             IkuraHeel();
@@ -92,6 +102,15 @@ public class IkuraController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.J))
         {
             transform.position = startPos;
+        }
+
+        if(Input.GetKey(KeyCode.Space))
+        {
+            BackMonitorOn();
+        }
+        if(Input.GetKeyUp(KeyCode.Space))
+        {
+            BackMonitorOff();
         }
     }
 
@@ -110,7 +129,7 @@ public class IkuraController : MonoBehaviour
 
     private void AxisStandby()
     {
-        //rb.velocity = Vector3.zero;
+        rb.velocity = Vector3.zero;
         NowShotPower = 0;
         PowerBar.value = 0;
         leftButton.gameObject.SetActive(true);
@@ -175,32 +194,52 @@ public class IkuraController : MonoBehaviour
         float posZ = transform.position.z;
 
         GameObject[] targets = GameObject.FindGameObjectsWithTag("Stone");
-        if (targets.Length == 1) NearStone=targets[0].transform;
+        if (targets.Length == 0)
+        {
+            AxisStandby();
+        } 
         else
         {
-            NearStone= null;
-            float NearZ = 1000f;
-            foreach (GameObject target in targets)
+            if (targets.Length == 1) NearStone = targets[0].transform;
+            else
             {
-                // 前回計測したオブジェクトよりも近くにあれば記録
-                float z = target.transform.position.z-stonea;
-                if (z - posZ >= 0&&NearZ>z-posZ)
+                NearStone = null;
+                float NearZ = 1000f;
+                foreach (GameObject target in targets)
                 {
-                    NearStone = target.transform;
-                    NearZ = z-posZ;
+                    // 前回計測したオブジェクトよりも近くにあれば記録
+                    float z = target.transform.position.z - stonea;
+                    if (z - posZ >= 0 && NearZ > z - posZ)
+                    {
+                        NearStone = target.transform;
+                        NearZ = z - posZ;
+                    }
                 }
             }
+            NearStone.position -= new Vector3(0, 0, 1);
+            NowIkuraState = IkuraState.None;
+            rb.velocity = Vector3.zero;
+            yield return new WaitForSeconds(2f);
+            NowIkuraState = IkuraState.Wall;
         }
-        NearStone.position -= new Vector3(0, 0, 1);
-        NowIkuraState = IkuraState.None;
-        rb.velocity = Vector3.zero;
-        yield return new WaitForSeconds(2f);
-        NowIkuraState = IkuraState.Wall;
     }
 
     public void AnimationChange()
     {
         animeState++;
         Debug.Log("ここにアニメーション遷移を書く");
+    }
+
+    private void BackMonitorOn()
+    {
+        canvas.enabled = false;
+        mainCamera.enabled = false;
+        BackCamera.enabled = true;
+    }
+    private void BackMonitorOff()
+    {
+        canvas.enabled = true;
+        mainCamera.enabled = true;
+        BackCamera.enabled = false;
     }
 }
