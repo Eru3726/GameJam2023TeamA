@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class IkuraController : MonoBehaviour
 {
-
+    Vector3 startPos;
 [Tooltip("LeftButtonをアタッチ")]
     [SerializeField] Button leftButton;
 [Tooltip("RightBrttonをアタッチ")]
@@ -26,12 +26,14 @@ public class IkuraController : MonoBehaviour
     [SerializeField][Min(1)]private float IkuraHP;
     private Vector3 OldPos;
     private Transform NearStone=null;
+    public float stonea;
 
     private Rigidbody rb;
     private Animator animator;
     private int animeState=0;
     public enum IkuraState
     {
+        None,
         Axis,
         Shot,
         Move,
@@ -40,6 +42,7 @@ public class IkuraController : MonoBehaviour
     private IkuraState NowIkuraState;
     void Start()
     {
+        startPos = transform.position;
         NowIkuraState = IkuraState.Axis;
         DamageBar.maxValue=IkuraHP;
         DamageBar.value = IkuraHP;
@@ -73,9 +76,9 @@ public class IkuraController : MonoBehaviour
             if(PLpos!=NSpos)
             {
                 float moveX = NSpos.x - PLpos.x;
-                moveX = Mathf.Clamp(moveX,-MaxShotPower,MaxShotPower);
+                moveX = Mathf.Clamp(moveX,-10,10);
                 float moveZ = NSpos.z - PLpos.z;
-                moveZ = Mathf.Clamp(moveZ, 0, RivarSpeed);
+                moveZ = Mathf.Clamp(moveZ, 0,20);
                 rb.AddForce(moveX,0,moveZ);
             }
         }
@@ -83,6 +86,10 @@ public class IkuraController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Return))
         {
             IkuraHeel();
+        }
+        if(Input.GetKeyDown(KeyCode.J))
+        {
+            transform.position = startPos;
         }
     }
 
@@ -95,7 +102,7 @@ public class IkuraController : MonoBehaviour
         }
         else
         {
-            StoneSearch();
+            StartCoroutine(StoneSearch());
         }
     }
 
@@ -160,7 +167,7 @@ public class IkuraController : MonoBehaviour
         DamageBar.value = MaxHP;
     }
 
-    private void StoneSearch()
+    private IEnumerator StoneSearch()
     {
         rb.velocity = Vector3.zero;
         float posZ = transform.position.z;
@@ -170,16 +177,21 @@ public class IkuraController : MonoBehaviour
         else
         {
             NearStone= null;
+            float NearZ = 1000f;
             foreach (GameObject target in targets)
             {
                 // 前回計測したオブジェクトよりも近くにあれば記録
-                float z = target.transform.position.z;
-                if (z - posZ >= 0)
+                float z = target.transform.position.z-stonea;
+                if (z - posZ >= 0&&NearZ>z-posZ)
                 {
                     NearStone = target.transform;
+                    NearZ = z-posZ;
                 }
             }
         }
+        NowIkuraState = IkuraState.None;
+        rb.velocity = Vector3.zero;
+        yield return new WaitForSeconds(2f);
         NowIkuraState = IkuraState.Wall;
     }
 
