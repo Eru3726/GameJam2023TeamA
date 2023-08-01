@@ -433,7 +433,7 @@ MonoBehaviour:
   rightBorder: 4
   leftBorder: -4
   startPos: -6
-  endPos: 20
+  endPos: 190.5
   moveProbability: 20
   moveRightBorder: 3
   moveLeftBorder: -3

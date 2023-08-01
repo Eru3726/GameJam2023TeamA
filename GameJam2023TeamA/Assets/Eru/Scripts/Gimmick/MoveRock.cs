@@ -19,9 +19,9 @@ public class MoveRock : MonoBehaviour
     {
         index = 1;
         rb = GetComponent<Rigidbody>();
-        rb.constraints = RigidbodyConstraints.FreezeRotation;
         rb.constraints = RigidbodyConstraints.FreezePositionY;
         rb.constraints = RigidbodyConstraints.FreezePositionZ;
+        rb.constraints = RigidbodyConstraints.FreezeRotation;
     }
 
     void Update()
