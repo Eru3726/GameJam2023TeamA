@@ -24,14 +24,18 @@ public class IkuraController : MonoBehaviour
     [SerializeField] private Slider DamageBar;
     [Tooltip("HPの最大値をアタッチ")]
     [SerializeField][Min(1)]private float IkuraHP;
-    private float OldPosZ;
+    private Vector3 OldPos;
+    private Transform NearStone=null;
 
     private Rigidbody rb;
+    private Animator animator;
+    private int animeState=0;
     public enum IkuraState
     {
         Axis,
         Shot,
         Move,
+        Wall,
     }
     private IkuraState NowIkuraState;
     void Start()
@@ -46,7 +50,6 @@ public class IkuraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
         if(NowIkuraState==IkuraState.Shot)
         {
             PowerChange();
@@ -63,12 +66,37 @@ public class IkuraController : MonoBehaviour
         {
             rb.AddForce(0, 0,RivarSpeed/50);
         }
+        if(NowIkuraState==IkuraState.Wall&&NearStone!=null)
+        {
+            Vector3 PLpos = transform.position;
+            Vector3 NSpos = NearStone.transform.position;
+            if(PLpos!=NSpos)
+            {
+                float moveX = NSpos.x - PLpos.x;
+                moveX = Mathf.Clamp(moveX,-MaxShotPower,MaxShotPower);
+                float moveZ = NSpos.z - PLpos.z;
+                moveZ = Mathf.Clamp(moveZ, 0, RivarSpeed);
+                rb.AddForce(moveX,0,moveZ);
+            }
+        }
+
+        if(Input.GetKeyDown(KeyCode.Return))
+        {
+            IkuraHeel();
+        }
     }
 
     private void OnCollisionEnter(Collision col)
     {
-        IkuraDamage();
-        AxisStandby();
+        if(col.gameObject.tag=="Stone")
+        {
+            IkuraDamage();
+            AxisStandby();
+        }
+        else
+        {
+            StoneSearch();
+        }
     }
 
     private void AxisStandby()
@@ -111,17 +139,53 @@ public class IkuraController : MonoBehaviour
     private void ShotIkura()
     {
         NowIkuraState = IkuraState.Move;
-        OldPosZ = transform.position.z;
+        OldPos = transform.position;
         Vector3 ShotForce = new Vector3(ShotAxisValue*NowShotPower*1.5f, 0,0);
         rb.AddForce(ShotForce);
     }
 
     private void IkuraDamage()
     {
-        float NewPosZ = transform.position.z;
-        float damagePersent= NewPosZ - OldPosZ;
+        Vector3 NewPosZ = transform.position;
+        float damagePersent=Vector3.Distance( NewPosZ , OldPos);
         float damage = IkuraHP / 100 * damagePersent;
         DamageBar.value -= damage;
-        if (damage == 0) Debug.Log("GameOver");
+        if (DamageBar.value <= 0) Debug.Log("GameOver");
+    }
+
+    public void IkuraHeel()
+    {
+        float MaxHP = DamageBar.maxValue;
+        IkuraHP = MaxHP;
+        DamageBar.value = MaxHP;
+    }
+
+    private void StoneSearch()
+    {
+        rb.velocity = Vector3.zero;
+        float posZ = transform.position.z;
+
+        GameObject[] targets = GameObject.FindGameObjectsWithTag("Stone");
+        if (targets.Length == 1) NearStone=targets[0].transform;
+        else
+        {
+            NearStone= null;
+            foreach (GameObject target in targets)
+            {
+                // 前回計測したオブジェクトよりも近くにあれば記録
+                float z = target.transform.position.z;
+                if (z - posZ >= 0)
+                {
+                    NearStone = target.transform;
+                }
+            }
+        }
+        NowIkuraState = IkuraState.Wall;
+    }
+
+    public void AnimationChange()
+    {
+        animeState++;
+        Debug.Log("ここにアニメーション遷移を書く");
     }
 }
