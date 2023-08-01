@@ -22,6 +22,27 @@ public class RockGenerator : MonoBehaviour
     [SerializeField, Header("生成終了位置")]
     private float endPos = 50f;
 
+    [SerializeField, Header("動く岩生成率"), Range(0f, 100f)]
+    private float moveProbability = 20f;
+
+    [SerializeField, Header("動く岩右範囲")]
+    private float moveRightBorder = 3;
+
+    [SerializeField, Header("動く岩左範囲")]
+    private float moveLeftBorder = -3f;
+
+    [SerializeField, Header("動く岩速度")]
+    private float moveSpeed = 5f;
+
+    [SerializeField,Header("滑る岩生成率"), Range(0f, 100f)]
+    private float iceProbability = 20f;
+
+    [SerializeField, Header("滑る岩の物理マテリアル")]
+    private PhysicMaterial icePhysicMaterial;
+
+    [SerializeField, Header("滑る岩のマテリアル")]
+    private Material iceMaterial;
+
     private float centerPos,crPos,clPos;
 
     private Vector3 genePos = new Vector3(0, 0.5f, 0);
@@ -46,11 +67,44 @@ public class RockGenerator : MonoBehaviour
         else if (rockPos == 3) genePos.x = Random.Range(centerPos, crPos);
         else genePos.x = Random.Range(crPos, rightBorder);
 
-        Instantiate(RockObj, genePos, Quaternion.identity);
+        GameObject rock = Instantiate(RockObj, genePos, Quaternion.identity);
+        GimmickRock(rock);
 
         genePos.z += geneDis;
         if (genePos.z >= endPos) yield break;
         else StartCoroutine(GeneRock());
+    }
+
+    private void GimmickRock(GameObject rock)
+    {
+        float rand = Random.Range(0.0f, 100.0f);
+        if(rand <= moveProbability)
+        {
+            MoveGimmick(rock);
+            return;
+        }
+
+        rand = Random.Range(0.0f, 100.0f);
+        if(rand <= iceProbability)
+        {
+            IceGimmick(rock);
+        }
+    }
+
+    private void MoveGimmick(GameObject rock)
+    {
+        rock.AddComponent<MoveRock>();
+        var mr = rock.GetComponent<MoveRock>();
+        mr.moveRightBorder = this.moveRightBorder;
+        mr.moveLeftBorder = this.moveLeftBorder;
+        mr.moveSpeed = this.moveSpeed;
+    }
+
+    private void IceGimmick(GameObject rock)
+    {
+        rock.GetComponent<BoxCollider>().material = icePhysicMaterial;
+        rock.GetComponent<MeshRenderer>().material = iceMaterial;
+        return;
     }
 
     private int PickRandomPos()

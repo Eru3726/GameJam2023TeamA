@@ -434,6 +434,13 @@ MonoBehaviour:
   leftBorder: -4
   startPos: -6
   endPos: 20
+  moveProbability: 20
+  moveRightBorder: 3
+  moveLeftBorder: -3
+  moveSpeed: 5
+  iceProbability: 20
+  icePhysicMaterial: {fileID: 13400000, guid: 3ed12348e4d515a4ea45f43624f0989b, type: 2}
+  iceMaterial: {fileID: 2100000, guid: d617987e8e5f20542964348c8351e69f, type: 2}
 --- !u!4 &1883500010
 Transform:
   m_ObjectHideFlags: 0
