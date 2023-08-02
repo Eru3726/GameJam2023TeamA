@@ -19,9 +19,9 @@ public class FishController : MonoBehaviour
         rb.velocity = new Vector3(0, 0, ChaseSpeed*Time.deltaTime);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player"))
         {
             GM.eatIkura();
         }

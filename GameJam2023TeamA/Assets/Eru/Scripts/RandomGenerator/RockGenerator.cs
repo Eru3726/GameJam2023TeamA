@@ -7,6 +7,9 @@ public class RockGenerator : MonoBehaviour
     [SerializeField,Header("石")]
     private GameObject RockObj;
 
+    [SerializeField, Header("サブ岩生成フラグ")]
+    private bool subRock = true;
+
     [SerializeField,Header("生成距離")]
     private float geneDis = 7.5f;
 
@@ -43,9 +46,21 @@ public class RockGenerator : MonoBehaviour
     [SerializeField, Header("滑る岩のマテリアル")]
     private Material iceMaterial;
 
-    private float centerPos,crPos,clPos;
+    [SerializeField, Header("毒岩生成率"), Range(0f, 100f)]
+    private float poisonProbability = 20f;
 
-    private Vector3 genePos = new Vector3(0, 0.1f, 0);
+    [SerializeField, Header("毒ダメージ")]
+    private int poisonDamage = 1;
+
+    [SerializeField, Header("毒待機時間")]
+    private float poisonDamageInterval = 0.1f;
+
+    [SerializeField, Header("毒岩のマテリアル")]
+    private Material poisonMaterial;
+
+    private float centerPos,crPos,clPos, prevLane,prevPosX;
+
+    private Vector3 genePos = new Vector3(0, 0, 0);
 
     private int lastSelectedNumber = 0;
     private int[] allNumbers = { 1, 2, 3, 4 };
@@ -56,7 +71,8 @@ public class RockGenerator : MonoBehaviour
         clPos = (centerPos + leftBorder) / 2;
         crPos = (rightBorder + centerPos) / 2;
         genePos.z = startPos;
-        genePos.y = 0.1f;
+        prevLane = 2;
+        prevPosX = 0;
         StartCoroutine(GeneRock());
     }
 
@@ -68,13 +84,56 @@ public class RockGenerator : MonoBehaviour
         else if (rockPos == 3) genePos.x = Random.Range(centerPos, crPos);
         else genePos.x = Random.Range(crPos, rightBorder);
 
+        ShiftRock(rockPos);
+
         GameObject rock = Instantiate(RockObj, genePos, Quaternion.identity);
         rock.transform.parent = this.transform;
         GimmickRock(rock);
 
+        if (subRock)
+        {
+            int rand = Random.Range(0, 2);
+            if (prevLane == 1) genePos.x = Random.Range(clPos, centerPos);
+            else if (prevLane == 2)
+            {
+                if (rand == 0) genePos.x = Random.Range(leftBorder, clPos);
+                else genePos.x = Random.Range(centerPos, crPos);
+            }
+            else if (prevLane == 3)
+            {
+                if (rand == 0) genePos.x = Random.Range(clPos, centerPos);
+                else genePos.x = Random.Range(crPos, rightBorder);
+            }
+            else genePos.x = Random.Range(centerPos, crPos);
+
+            genePos.z += geneDis / 2;
+
+            ShiftRock(rockPos);
+
+            rock = Instantiate(RockObj, genePos, Quaternion.identity);
+            rock.transform.parent = this.transform;
+            GimmickRock(rock);
+        }
         genePos.z += geneDis;
+
+        prevLane = rockPos;
         if (genePos.z >= endPos) yield break;
         else StartCoroutine(GeneRock());
+    }
+
+    private void ShiftRock(int rockPos)
+    {
+        if (genePos.x < prevPosX + 2f && genePos.x > prevPosX - 2f)
+        {
+            if (rockPos == 1) genePos.x += 2f;
+            else if (rockPos == 2 || rockPos == 3)
+            {
+                int rand = Random.Range(0, 2);
+                if (rand == 0) genePos.x -= 2f;
+                else genePos.x = genePos.x += 2f;
+            }
+            else genePos.x = genePos.x -= 2f;
+        }
     }
 
     private void GimmickRock(GameObject rock)
@@ -91,12 +150,17 @@ public class RockGenerator : MonoBehaviour
         {
             IceGimmick(rock);
         }
+
+        rand = Random.Range(0.0f, 100.0f);
+        if (rand <= poisonProbability)
+        {
+            PoisonGimmick(rock);
+        }
     }
 
     private void MoveGimmick(GameObject rock)
     {
-        rock.AddComponent<MoveRock>();
-        var mr = rock.GetComponent<MoveRock>();
+        var mr = rock.AddComponent<MoveRock>();
         mr.moveRightBorder = this.moveRightBorder;
         mr.moveLeftBorder = this.moveLeftBorder;
         mr.moveSpeed = this.moveSpeed;
@@ -104,9 +168,16 @@ public class RockGenerator : MonoBehaviour
 
     private void IceGimmick(GameObject rock)
     {
-        rock.GetComponent<SphereCollider>().material = icePhysicMaterial;
-        rock.GetComponentInChildren<MeshRenderer>().material = iceMaterial;
-        return;
+        rock.GetComponent<SphereCollider>().material = this.icePhysicMaterial;
+        rock.GetComponentInChildren<MeshRenderer>().material = this.iceMaterial;
+    }
+
+    private void PoisonGimmick(GameObject rock)
+    {
+        var pr = rock.AddComponent<PoisonRock>();
+        pr.damage = this.poisonDamage;
+        pr.damageInterval = this.poisonDamageInterval;
+        rock.GetComponentInChildren<MeshRenderer>().material = this.poisonMaterial;
     }
 
     private int PickRandomPos()

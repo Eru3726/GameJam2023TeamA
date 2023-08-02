@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2674235309830443634}
-  - component: {fileID: 2674235309830443635}
+  - component: {fileID: -2428486014782371815}
   m_Layer: 0
   m_Name: Rock
   m_TagString: Stone
@@ -26,15 +26,15 @@ Transform:
   m_GameObject: {fileID: 2674235309830443632}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2492306596559524507}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &2674235309830443635
-CapsuleCollider:
+--- !u!135 &-2428486014782371815
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -43,9 +43,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 1
-  m_Direction: 1
+  serializedVersion: 2
+  m_Radius: 0.53
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &2674235309724956016
 PrefabInstance:

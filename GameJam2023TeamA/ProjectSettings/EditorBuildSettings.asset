@@ -6,12 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Eru/Scenes/GameScene.unity
-    guid: d6892d421d8e0414ab7878bf4da64954
-  - enabled: 1
     path: Assets/Ootani/Scenes/Title.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Ootani/Scenes/Stage.unity
-    guid: 6d40cfd6f4c3b964b9ec00e86299779c
+    path: Assets/Eru/Scenes/GameScene.unity
+    guid: d6892d421d8e0414ab7878bf4da64954
   m_configObjects: {}

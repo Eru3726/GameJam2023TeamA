@@ -57,6 +57,7 @@ public class GameOverPanelManager : MonoBehaviour
                 if (Input.GetMouseButtonDown(0))
                 {
                     setValue("追い付かれた", 1200, 111);
+                    causeOfDeathText.text = causeOfDeath;
                     StartCoroutine(selectDisplay());
                     state = State.Select;
                 }
@@ -101,7 +102,6 @@ public class GameOverPanelManager : MonoBehaviour
     // 数値のテキストを更新
     public void valueTextUpdate()
     {
-        causeOfDeathText.text = causeOfDeath;
         distanceText.DOCounter(0, distance, 1, true);
         scoreText.DOCounter(0, score, 1, true);
     }
