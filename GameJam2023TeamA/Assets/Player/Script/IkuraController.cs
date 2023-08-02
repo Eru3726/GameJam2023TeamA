@@ -158,6 +158,7 @@ public class IkuraController : MonoBehaviour
 
     private void OnCollisionEnter(Collision col)
     {
+        if (col.gameObject.tag == "Ice") return;
         if (col.gameObject.tag=="Stone")
         {
             IkuraDamage(Vector3.Distance(this.transform.position, OldPos));

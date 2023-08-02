@@ -58,6 +58,9 @@ public class RockGenerator : MonoBehaviour
     [SerializeField, Header("“ÅŠâ‚Ìƒ}ƒeƒŠƒAƒ‹")]
     private Material poisonMaterial;
 
+    [HideInInspector]
+    public static bool hard = false;
+
     private float centerPos,crPos,clPos, prevLane,prevPosX;
 
     private Vector3 genePos = new Vector3(0, 0, 0);
