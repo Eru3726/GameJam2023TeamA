@@ -10,20 +10,54 @@ public class TitleManager : MonoBehaviour
     [SerializeField] CanvasGroup startText;
     [SerializeField] string stageSceneName;
     bool sceneTransitionRights = false;
+    bool enterState = false;
 
-    private void Start()
+    enum State
     {
-        StartCoroutine(titleDisplay());
+        Title,
+        Difficulty,
     }
+    State state = State.Title;
 
 
     private void Update()
     {
+        // シーン遷移する前に左クリックをしたら
         if (Input.GetMouseButton(0) && sceneTransitionRights == true) 
         {
+            // ステージのシーンに移動する
             FadeManager.Instance.LoadScene(stageSceneName, 1);
 
+            // シーン遷移を多重にできないようにする
             sceneTransitionRights = false;
+        }
+
+        switch(state)
+        {
+            case State.Title:
+                if (enterState == true)
+                {
+                    StartCoroutine(titleDisplay());
+                }
+
+                // シーン遷移する前に左クリックをしたら
+                if (Input.GetMouseButton(0) && sceneTransitionRights == true)
+                {
+                    // ステージのシーンに移動する
+                    FadeManager.Instance.LoadScene(stageSceneName, 1);
+
+                    // シーン遷移を多重にできないようにする
+                    sceneTransitionRights = false;
+                }
+                break;
+
+            case State.Difficulty:
+                if (enterState == true)
+                {
+
+                }
+
+                break;
         }
     }
 
@@ -35,4 +69,15 @@ public class TitleManager : MonoBehaviour
         sceneTransitionRights = true;
     }
 
+    void difficultyDisplay()
+    {
+        startText.gameObject.SetActive(false);
+
+
+    }
+
+    private void LateUpdate()
+    {
+        enterState = false;
+    }
 }
