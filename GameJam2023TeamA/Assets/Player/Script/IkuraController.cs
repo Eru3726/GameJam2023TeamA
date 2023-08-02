@@ -44,6 +44,7 @@ public class IkuraController : MonoBehaviour
     [Tooltip("BackCameraをアタッチ")]
     [SerializeField] private Camera BackCamera;
 
+    private bool SlipSwitch=false; 
     private bool MoveStoneSwitch = false;
     public enum IkuraState
     {
@@ -76,7 +77,7 @@ public class IkuraController : MonoBehaviour
         if (MoveStoneSwitch)
         {
             Vector3 MSpos = MoveRock.transform.position;
-            MSpos += new Vector3(0, 0, -1.5f);
+            MSpos += new Vector3(0, 0, -2f);
             transform.position = MSpos;
         }
         //動く岩にくっついている時
@@ -140,21 +141,15 @@ public class IkuraController : MonoBehaviour
 
     private void OnCollisionEnter(Collision col)
     {
-        
-
         if (col.gameObject.tag=="Stone")
         {
-            //if(col.gameObject.GetComponent<Material>())
-            //{
-            //    if(col.gameObject.GetComponent<Material>().name=="Cyan")
-            //    {
+            IkuraDamage(Vector3.Distance(this.transform.position, OldPos));
+            Material stoneMat = col.gameObject.GetComponentInChildren<MeshRenderer>().material;
+            if(stoneMat.name!="Ice")
+            {
+                AxisStandby();
+            }
 
-            //    }
-            //}
-
-            IkuraDamage();
-            AxisStandby();
-            
             if (col.gameObject.GetComponent<MoveRock>())
             {
                 MoveRock = col.transform;
@@ -170,7 +165,6 @@ public class IkuraController : MonoBehaviour
     private void AxisStandby()
     {
         rb.velocity = Vector3.zero;
-        NowShotPower = 0;
         PowerBar.value = 0;
         leftButton.gameObject.SetActive(true);
         rightButton.gameObject.SetActive(true);
@@ -209,6 +203,7 @@ public class IkuraController : MonoBehaviour
 
     private void ShotIkura()
     {
+        Debug.Log("発射");
         MoveStoneSwitch = false;
         NowIkuraState = IkuraState.Move;
         OldPos = transform.position;
@@ -217,15 +212,15 @@ public class IkuraController : MonoBehaviour
     }
     //イクラ発射
 
-    private void IkuraDamage()
+    public void IkuraDamage(float Damage)
     {
-        Vector3 NewPosZ = transform.position;
-        float damagePersent=Vector3.Distance( NewPosZ , OldPos);
-        float damage = IkuraHP / 100 * damagePersent;
+        float damage = IkuraHP / 100 * Damage;
         DamageBar.value -= damage;
         if (DamageBar.value <= 0)
         {
             Debug.Log("お前はもう死んでいるギョ…");
+            BackMonitorOff();
+            manager.eatIkura();
             IkuraDead();
         }
     }
