@@ -8,6 +8,7 @@ public class TitleManager : MonoBehaviour
 {
     [SerializeField] CanvasGroup titleNameText;
     [SerializeField] CanvasGroup startText;
+    [SerializeField] CanvasGroup difficultyTexts;
     [SerializeField] string stageSceneName;
     bool sceneTransitionRights = false;
     bool enterState = false;
@@ -19,6 +20,10 @@ public class TitleManager : MonoBehaviour
     }
     State state = State.Title;
 
+    private void Start()
+    {
+        enterState = true;
+    }
 
     private void Update()
     {
@@ -55,6 +60,15 @@ public class TitleManager : MonoBehaviour
                 if (enterState == true)
                 {
 
+                }
+
+                if (Input.GetMouseButton(0) && sceneTransitionRights == true)
+                {
+                    // ステージのシーンに移動する
+                    FadeManager.Instance.LoadScene(stageSceneName, 1);
+
+                    // シーン遷移を多重にできないようにする
+                    sceneTransitionRights = false;
                 }
 
                 break;

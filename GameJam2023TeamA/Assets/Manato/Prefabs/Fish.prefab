@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ChaseSpeed: 500
+  GM: {fileID: 0}
 --- !u!54 &8107095311573738792
 Rigidbody:
   m_ObjectHideFlags: 0

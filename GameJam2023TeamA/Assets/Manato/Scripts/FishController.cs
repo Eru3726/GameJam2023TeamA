@@ -8,6 +8,7 @@ public class FishController : MonoBehaviour
     public float ChaseSpeed = 0;
 
     private Rigidbody rb;
+    public GameManager GM;
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
@@ -22,7 +23,7 @@ public class FishController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("GameOver");    //ゲームオーバー処理
+            GM.eatIkura();
         }
     }
 }

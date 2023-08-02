@@ -12,10 +12,16 @@ public class DifficultyButton : ButtonManager
     private void Start()
     {
         onPointerAction = textDisplay;
+        offPointerAction = hideText;
     }
 
     void textDisplay()
     {
+        descriptionText.text = description;
+    }
 
+    void hideText()
+    {
+        descriptionText.text = "";
     }
 }
