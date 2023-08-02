@@ -85,8 +85,6 @@ public class RockGenerator : MonoBehaviour
         else if (rockPos == 3) genePos.x = Random.Range(centerPos, crPos);
         else genePos.x = Random.Range(crPos, rightBorder);
 
-        ShiftRock(rockPos);
-
         GameObject rock = Instantiate(RockObj, genePos, Quaternion.identity);
         rock.transform.parent = this.transform;
         GimmickRock(rock);
