@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class IkuraController : MonoBehaviour
 {
     Vector3 startPos;
+    float standardPosY;
 [Tooltip("LeftButtonをアタッチ")]
     [SerializeField] Button leftButton;
 [Tooltip("RightBrttonをアタッチ")]
@@ -26,7 +27,8 @@ public class IkuraController : MonoBehaviour
     [SerializeField][Min(1)]private float IkuraHP;
     private Vector3 OldPos;
     private Transform NearStone=null;
-    public float stonea;
+    private Transform MoveRock = null;
+    public float StoneAuto;
 
     [Tooltip("IkuraChanをアタッチ")]
     [SerializeField] SphereCollider IkuraCol;
@@ -41,6 +43,8 @@ public class IkuraController : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [Tooltip("BackCameraをアタッチ")]
     [SerializeField] private Camera BackCamera;
+
+    private bool MoveStoneSwitch = false;
     public enum IkuraState
     {
         None,
@@ -64,6 +68,17 @@ public class IkuraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Vector3 nowPos = transform.position;
+        nowPos.y = standardPosY;
+        transform.position = nowPos;
+        if (MoveStoneSwitch)
+        {
+            Vector3 MSpos = MoveRock.transform.position;
+            MSpos += new Vector3(0, 0, -1.5f);
+            transform.position = MSpos;
+        }
+        //動く岩にくっついている時
+
         if(NowIkuraState==IkuraState.Shot)
         {
             PowerChange();
@@ -76,25 +91,32 @@ public class IkuraController : MonoBehaviour
                 AxisStandby();
             }
         }
+        //ショット状態の時
+
         if(NowIkuraState==IkuraState.Move)
         {
             rb.AddForce(0, 0,RivarSpeed/50);
         }
+        //動いている時
+
         if(NowIkuraState==IkuraState.Wall&&NearStone!=null)
         {
             Vector3 PLpos = transform.position;
             Vector3 NSpos = NearStone.transform.position;
+            NSpos += new Vector3(0, 0, StoneAuto);
             if(PLpos!=NSpos)
             {
                 float moveX = NSpos.x - PLpos.x;
-                moveX = Mathf.Clamp(moveX,-10,10);
+                moveX = Mathf.Clamp(moveX,-0.07f,0.07f);
                 float moveZ = NSpos.z - PLpos.z;
-                moveZ = Mathf.Clamp(moveZ, 0,20);
-                rb.AddForce(moveX,0,moveZ);
+                moveZ = Mathf.Clamp(moveZ, 0,0.05f);
+                transform.position += new Vector3(moveX, 0, moveZ);
+                //rb.AddForce(moveX,0,moveZ);
             }
         }
-
+        //壁に当たった時
         
+        //以下、デバッグ用
         if(Input.GetKeyDown(KeyCode.Return))
         {
             IkuraHeel();
@@ -104,7 +126,7 @@ public class IkuraController : MonoBehaviour
             transform.position = startPos;
         }
 
-        if(Input.GetKey(KeyCode.Space))
+        if(Input.GetKeyDown(KeyCode.Space))
         {
             BackMonitorOn();
         }
@@ -116,10 +138,26 @@ public class IkuraController : MonoBehaviour
 
     private void OnCollisionEnter(Collision col)
     {
-        if(col.gameObject.tag=="Stone")
+        
+
+        if (col.gameObject.tag=="Stone")
         {
+            //if(col.gameObject.GetComponent<Material>())
+            //{
+            //    if(col.gameObject.GetComponent<Material>().name=="Cyan")
+            //    {
+
+            //    }
+            //}
+
             IkuraDamage();
             AxisStandby();
+            
+            if (col.gameObject.GetComponent<MoveRock>())
+            {
+                MoveRock = col.transform;
+                MoveStoneSwitch = true;
+            }
         }
         else
         {
@@ -138,6 +176,7 @@ public class IkuraController : MonoBehaviour
         rightButton.interactable = true;
         NowIkuraState = IkuraState.Axis;
     }
+    //発射体制に偏移
 
     public void ShotAxis(int axis)
     {
@@ -156,6 +195,7 @@ public class IkuraController : MonoBehaviour
         goButton.interactable = false;
         NowIkuraState = IkuraState.Shot;
     }
+    //発射方向を決定するボタン用プログラム
 
     private void PowerChange()
     {
@@ -163,14 +203,17 @@ public class IkuraController : MonoBehaviour
         if(NowShotPower>MaxShotPower){NowShotPower = 0;}
         PowerBar.value = NowShotPower;
     }
+    //発射パワーの計算
 
     private void ShotIkura()
     {
+        MoveStoneSwitch = false;
         NowIkuraState = IkuraState.Move;
         OldPos = transform.position;
         Vector3 ShotForce = new Vector3(ShotAxisValue*NowShotPower*1.5f, 0,0);
         rb.AddForce(ShotForce);
     }
+    //イクラ発射
 
     private void IkuraDamage()
     {
@@ -180,6 +223,7 @@ public class IkuraController : MonoBehaviour
         DamageBar.value -= damage;
         if (DamageBar.value <= 0) Debug.Log("GameOver");
     }
+    //ダメージ処理
 
     public void IkuraHeel()
     {
@@ -187,41 +231,59 @@ public class IkuraController : MonoBehaviour
         IkuraHP = MaxHP;
         DamageBar.value = MaxHP;
     }
+    //回復処理
 
     private IEnumerator StoneSearch()
     {
+        NoShot();
         rb.velocity = Vector3.zero;
         float posZ = transform.position.z;
+        //NearStone = null;
 
         GameObject[] targets = GameObject.FindGameObjectsWithTag("Stone");
-        if (targets.Length == 0)
+        if (targets==null)
         {
             AxisStandby();
-        } 
+            yield break;
+        }
+        //岩が無ければ終了する
+
+        if (targets.Length == 1) NearStone = targets[0].transform;
+        //ステージに岩が１つのみなら、その岩で決定する
         else
         {
-            if (targets.Length == 1) NearStone = targets[0].transform;
-            else
+            float NearZ = 1000f;
+            foreach (GameObject target in targets)
             {
-                NearStone = null;
-                float NearZ = 1000f;
-                foreach (GameObject target in targets)
+                // 前回計測したオブジェクトよりも近くにあれば記録
+                float z = target.transform.position.z - StoneAuto;
+                if (z - posZ >= 0 && NearZ > z - posZ)
                 {
-                    // 前回計測したオブジェクトよりも近くにあれば記録
-                    float z = target.transform.position.z - stonea;
-                    if (z - posZ >= 0 && NearZ > z - posZ)
-                    {
-                        NearStone = target.transform;
-                        NearZ = z - posZ;
-                    }
+                    NearStone = target.transform;
+                    NearZ = z - posZ;
                 }
             }
-            NearStone.position -= new Vector3(0, 0, 1);
-            NowIkuraState = IkuraState.None;
-            rb.velocity = Vector3.zero;
+        }
+        //ステージに岩が複数あるなら、距離を探査する
+        NowIkuraState = IkuraState.None;
+        rb.velocity = Vector3.zero;
+        if (NearStone == null)
+        {
+            AxisStandby();
+            yield break;
+        }
+        else
+        {
             yield return new WaitForSeconds(2f);
             NowIkuraState = IkuraState.Wall;
         }
+    }
+    //一番近い岩を探査する
+
+    private void NoShot()
+    {
+        leftButton.gameObject.SetActive(false);
+        rightButton.gameObject.SetActive(false);
     }
 
     public void AnimationChange()
@@ -236,10 +298,24 @@ public class IkuraController : MonoBehaviour
         mainCamera.enabled = false;
         BackCamera.enabled = true;
     }
+    //背後モニターをオンにする
+
     private void BackMonitorOff()
     {
         canvas.enabled = true;
         mainCamera.enabled = true;
         BackCamera.enabled = false;
+    }
+    //背後モニターをオフにする
+
+    private void OnTriggerEnter(Collider col)
+    {
+        DamageBar.value =0;
+        Debug.Log("食べられちゃったギョ…");
+    }
+
+    private void IkuraDead()
+    {
+
     }
 }
