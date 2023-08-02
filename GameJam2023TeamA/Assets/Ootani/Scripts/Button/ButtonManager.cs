@@ -21,7 +21,6 @@ public class ButtonManager : MonoBehaviour
     // マウスカーソルがボタンと重なると
     public void onPointer()
     {
-        Debug.Log("あ");
         // ボタンを少し大きくする
         rectTransform.DOScale(originalScale * 1.2f, 0.5f);
 
