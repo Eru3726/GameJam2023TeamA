@@ -10,7 +10,7 @@ public class TitleManager : MonoBehaviour
     [SerializeField] CanvasGroup startText;
     [SerializeField] CanvasGroup difficultyTexts;
     [SerializeField] string stageSceneName;
-    bool sceneTransitionRights = false;
+    bool sceneTransitionRights = true;
     bool enterState = false;
 
     enum State
@@ -27,16 +27,6 @@ public class TitleManager : MonoBehaviour
 
     private void Update()
     {
-        // シーン遷移する前に左クリックをしたら
-        if (Input.GetMouseButton(0) && sceneTransitionRights == true) 
-        {
-            // ステージのシーンに移動する
-            FadeManager.Instance.LoadScene(stageSceneName, 1);
-
-            // シーン遷移を多重にできないようにする
-            sceneTransitionRights = false;
-        }
-
         switch(state)
         {
             case State.Title:
@@ -46,31 +36,11 @@ public class TitleManager : MonoBehaviour
                 }
 
                 // シーン遷移する前に左クリックをしたら
-                if (Input.GetMouseButton(0) && sceneTransitionRights == true)
+                if (Input.GetMouseButtonDown(0))
                 {
-                    // ステージのシーンに移動する
-                    FadeManager.Instance.LoadScene(stageSceneName, 1);
-
-                    // シーン遷移を多重にできないようにする
-                    sceneTransitionRights = false;
+                    difficultyDisplay();
+                    state = State.Difficulty;
                 }
-                break;
-
-            case State.Difficulty:
-                if (enterState == true)
-                {
-
-                }
-
-                if (Input.GetMouseButton(0) && sceneTransitionRights == true)
-                {
-                    // ステージのシーンに移動する
-                    FadeManager.Instance.LoadScene(stageSceneName, 1);
-
-                    // シーン遷移を多重にできないようにする
-                    sceneTransitionRights = false;
-                }
-
                 break;
         }
     }
@@ -86,12 +56,36 @@ public class TitleManager : MonoBehaviour
     void difficultyDisplay()
     {
         startText.gameObject.SetActive(false);
-
-
+        difficultyTexts.gameObject.SetActive(true);
     }
 
     private void LateUpdate()
     {
         enterState = false;
+    }
+
+    public void normalDifficulty()
+    {
+        if (Input.GetMouseButtonDown(0) && sceneTransitionRights == true)
+        {
+            // ステージのシーンに移動する
+            FadeManager.Instance.LoadScene(stageSceneName, 1);
+
+            // シーン遷移を多重にできないようにする
+            sceneTransitionRights = false;
+        }
+
+    }
+    public void hardlDifficulty()
+    {
+        if (Input.GetMouseButtonDown(0) && sceneTransitionRights == true)
+        {
+            // ステージのシーンに移動する
+            FadeManager.Instance.LoadScene(stageSceneName, 1);
+
+            // シーン遷移を多重にできないようにする
+            sceneTransitionRights = false;
+        }
+
     }
 }
