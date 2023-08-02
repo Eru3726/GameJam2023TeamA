@@ -58,6 +58,9 @@ public class RockGenerator : MonoBehaviour
     [SerializeField, Header("“ÅŠâ‚Ìƒ}ƒeƒŠƒAƒ‹")]
     private Material poisonMaterial;
 
+    [HideInInspector]
+    public static bool hard = false;
+
     private float centerPos,crPos,clPos, prevLane,prevPosX;
 
     private Vector3 genePos = new Vector3(0, 0, 0);
@@ -84,8 +87,6 @@ public class RockGenerator : MonoBehaviour
         else if (rockPos == 2) genePos.x = Random.Range(clPos, centerPos);
         else if (rockPos == 3) genePos.x = Random.Range(centerPos, crPos);
         else genePos.x = Random.Range(crPos, rightBorder);
-
-        ShiftRock(rockPos);
 
         GameObject rock = Instantiate(RockObj, genePos, Quaternion.identity);
         rock.transform.parent = this.transform;
@@ -171,6 +172,7 @@ public class RockGenerator : MonoBehaviour
     {
         rock.GetComponent<SphereCollider>().material = this.icePhysicMaterial;
         rock.GetComponentInChildren<MeshRenderer>().material = this.iceMaterial;
+        rock.gameObject.tag = "Ice";
     }
 
     private void PoisonGimmick(GameObject rock)
