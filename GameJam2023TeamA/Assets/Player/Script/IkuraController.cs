@@ -44,7 +44,13 @@ public class IkuraController : MonoBehaviour
     [Tooltip("BackCameraをアタッチ")]
     [SerializeField] private Camera BackCamera;
 
-    private bool SlipSwitch=false; 
+    [Tooltip("Audioをアタッチ")]
+    [SerializeField] private AudioSource audioSource;
+    [Tooltip("パワーチャージ音")]
+    [SerializeField] private AudioClip powerChargeSE;
+    [Tooltip("パワー決定音")]
+    [SerializeField] private AudioClip powerIgunitSE;
+
     private bool MoveStoneSwitch = false;
     public enum IkuraState
     {
@@ -144,11 +150,7 @@ public class IkuraController : MonoBehaviour
         if (col.gameObject.tag=="Stone")
         {
             IkuraDamage(Vector3.Distance(this.transform.position, OldPos));
-            Material stoneMat = col.gameObject.GetComponentInChildren<MeshRenderer>().material;
-            if(stoneMat.name!="Ice")
-            {
-                AxisStandby();
-            }
+            AxisStandby();
 
             if (col.gameObject.GetComponent<MoveRock>())
             {
@@ -165,6 +167,7 @@ public class IkuraController : MonoBehaviour
     private void AxisStandby()
     {
         rb.velocity = Vector3.zero;
+        NowShotPower = 0;
         PowerBar.value = 0;
         leftButton.gameObject.SetActive(true);
         rightButton.gameObject.SetActive(true);
@@ -195,15 +198,24 @@ public class IkuraController : MonoBehaviour
 
     private void PowerChange()
     {
+        if (!audioSource.isPlaying) 
+        {
+            audioSource.PlayOneShot(powerChargeSE); 
+        }
         NowShotPower += MaxShotPower / 100;
-        if(NowShotPower>MaxShotPower){NowShotPower = 0;}
+        if(NowShotPower>MaxShotPower)
+        {
+            NowShotPower = 0;
+            audioSource.Stop();
+        }
         PowerBar.value = NowShotPower;
     }
     //発射パワーの計算
 
     private void ShotIkura()
     {
-        Debug.Log("発射");
+        audioSource.Stop();
+        audioSource.PlayOneShot(powerIgunitSE);
         MoveStoneSwitch = false;
         NowIkuraState = IkuraState.Move;
         OldPos = transform.position;
