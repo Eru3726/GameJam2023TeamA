@@ -223,7 +223,11 @@ public class IkuraController : MonoBehaviour
         float damagePersent=Vector3.Distance( NewPosZ , OldPos);
         float damage = IkuraHP / 100 * damagePersent;
         DamageBar.value -= damage;
-        if (DamageBar.value <= 0) Debug.Log("GameOver");
+        if (DamageBar.value <= 0)
+        {
+            Debug.Log("お前はもう死んでいるギョ…");
+            IkuraDead();
+        }
     }
     //ダメージ処理
 
@@ -312,10 +316,11 @@ public class IkuraController : MonoBehaviour
 
     private void OnTriggerEnter(Collider col)
     {
-        IkuraDead();
+        BackMonitorOff();
         DamageBar.value =0;
         Debug.Log("食べられちゃったギョ…");
         manager.eatIkura();
+        IkuraDead();
     }
 
     private void IkuraDead()
