@@ -24,9 +24,11 @@ public class PoisonRock : MonoBehaviour
     {
         if(collision.gameObject.tag == "Player")
         {
+            Debug.Log("‚æ‚Ñ‚¾‚³");
             if (time > 0f) return;
             //ƒ_ƒ[ƒWˆ—
-
+            var hp = collision.gameObject.GetComponent<IkuraController>();
+            hp.IkuraDamage(damage);
             time = damageInterval;
         }
     }
