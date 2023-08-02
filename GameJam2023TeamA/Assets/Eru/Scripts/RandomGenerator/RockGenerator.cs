@@ -67,6 +67,7 @@ public class RockGenerator : MonoBehaviour
 
     void Start()
     {
+        Application.targetFrameRate = 60;
         centerPos = (rightBorder + leftBorder) / 2;
         clPos = (centerPos + leftBorder) / 2;
         crPos = (rightBorder + centerPos) / 2;

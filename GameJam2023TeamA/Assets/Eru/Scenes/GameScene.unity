@@ -2785,9 +2785,29 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1281736530124266834, guid: cd579232442e3114099f66a373b567b4, type: 3}
+      propertyPath: GM
+      value: 
+      objectReference: {fileID: 772384433}
     - target: {fileID: 4481947611554262188, guid: cd579232442e3114099f66a373b567b4, type: 3}
       propertyPath: m_RootOrder
       value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 4481947611554262188, guid: cd579232442e3114099f66a373b567b4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 5.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5006524777033256098, guid: cd579232442e3114099f66a373b567b4, type: 3}
+      propertyPath: m_Radius
+      value: 11.26
+      objectReference: {fileID: 0}
+    - target: {fileID: 5006524777033256098, guid: cd579232442e3114099f66a373b567b4, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7551165735387373507, guid: cd579232442e3114099f66a373b567b4, type: 3}
+      propertyPath: m_Constraints
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8107095311573738790, guid: cd579232442e3114099f66a373b567b4, type: 3}
       propertyPath: m_RootOrder
