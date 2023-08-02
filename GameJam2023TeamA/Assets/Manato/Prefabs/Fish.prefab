@@ -49,7 +49,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ChaseSpeed: 500
+<<<<<<< HEAD
 --- !u!54 &5125655825684670878
+=======
+  GM: {fileID: 0}
+--- !u!54 &8107095311573738792
+>>>>>>> main
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

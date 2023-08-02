@@ -8,38 +8,79 @@ using UnityEngine.SceneManagement;
 public class GameOverPanelManager : MonoBehaviour
 {
     // 移動距離のテキスト
+    [SerializeField] RectTransform gameOverText;
+    [SerializeField] Text causeOfDeathText;
+    [SerializeField] CanvasGroup valueText;
     [SerializeField] Text distanceText;
+    [SerializeField] Text scoreText;
     [SerializeField] string titleSceneName;
     [SerializeField] CanvasGroup buttons;
 
-    RectTransform rectTransform;
+    string causeOfDeath;
+    int distance;
+    int score;
+
     bool sceneTransitionRights = true;
+    bool enterState = false;
+
+    enum State
+    {
+        GameOver,
+        Select,
+    }
+    State state = State.GameOver;
 
     private void Start()
     {
-        rectTransform = GetComponent<RectTransform>();
-
         // ボタンが見えなくてもクリック出来てしまうので非アクティブ化する
         buttons.gameObject.SetActive(false);
-
-        StartCoroutine(panelDisplay(120));
     }
 
-    // 移動距離のテキストを更新
-    public void distanceTextUpdate(float value)
+
+    private void Update()
     {
-        distanceText.DOCounter(0, (int)value, 1, true);
+        if(Input.GetMouseButtonDown(0))
+        {
+            gameOverText.gameObject.SetActive(true);
+        }
+
+        switch(state)
+        {
+            case State.GameOver:
+                if (enterState == true)
+                {
+                    enterState = false;
+
+                    gameOverText.gameObject.SetActive(true);
+                }
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    setValue("追い付かれた", 1200, 111);
+                    StartCoroutine(selectDisplay());
+                    state = State.Select;
+                }
+                break;
+        }
+    }
+    private void LateUpdate()
+    {
+        enterState = false;
     }
 
-    // ゲームオーバーパネルを呼び出す
-    IEnumerator panelDisplay(float distance)
+    IEnumerator selectDisplay()
     {
-        // ゲームオーバーパネルを画面の中心に移動させる
-        rectTransform.DOAnchorPosX(0, 1);
+        gameOverText.DOAnchorPosY(380, 1);
+        gameOverText.DOScale(gameOverText.localScale * 0.5f, 1);
+
+        yield return new WaitForSeconds(1);
+        causeOfDeathText.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
+        valueText.DOFade(1, 0.5f);
+
         yield return new WaitForSeconds(1);
 
         // 移動距離のテキストを更新
-        distanceTextUpdate(distance);
+        valueTextUpdate();
         yield return new WaitForSeconds(1);
 
         // ボタンをアクティブ化
@@ -47,6 +88,22 @@ public class GameOverPanelManager : MonoBehaviour
 
         // ボタンの見た目をフェードインする
         buttons.DOFade(1, 0.5f);
+    }
+
+    // 数値の更新
+    public void setValue(string death, int dis, int sco)
+    {
+        causeOfDeath = death;
+        distance = dis;
+        score = sco;
+    }
+
+    // 数値のテキストを更新
+    public void valueTextUpdate()
+    {
+        causeOfDeathText.text = causeOfDeath;
+        distanceText.DOCounter(0, distance, 1, true);
+        scoreText.DOCounter(0, score, 1, true);
     }
 
     // リトライする
