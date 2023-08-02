@@ -54,6 +54,8 @@ public class IkuraController : MonoBehaviour
         Wall,
     }
     private IkuraState NowIkuraState;
+
+    [SerializeField]GameManager manager;
     void Start()
     {
         startPos = transform.position;
@@ -310,12 +312,18 @@ public class IkuraController : MonoBehaviour
 
     private void OnTriggerEnter(Collider col)
     {
+        IkuraDead();
         DamageBar.value =0;
         Debug.Log("êHÇ◊ÇÁÇÍÇøÇ·Ç¡ÇΩÉMÉáÅc");
+        manager.eatIkura();
     }
 
     private void IkuraDead()
     {
-
+        leftButton.gameObject.SetActive(false) ;
+        rightButton.gameObject.SetActive(false);
+        PowerBar.gameObject.SetActive(false);
+        DamageBar.gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 }
