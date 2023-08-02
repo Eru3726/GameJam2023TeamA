@@ -1613,7 +1613,7 @@ MonoBehaviour:
   titleNameText: {fileID: 2110566662}
   startText: {fileID: 1125651667}
   difficultyTexts: {fileID: 1090866633}
-  stageSceneName: GameScene
+  stageSceneName: StageScene
 --- !u!4 &2113142186
 Transform:
   m_ObjectHideFlags: 0

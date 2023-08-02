@@ -66,25 +66,29 @@ public class TitleManager : MonoBehaviour
 
     public void normalDifficulty()
     {
-        if (Input.GetMouseButtonDown(0) && sceneTransitionRights == true)
+        if (sceneTransitionRights == true)
         {
             // ステージのシーンに移動する
             FadeManager.Instance.LoadScene(stageSceneName, 1);
 
             // シーン遷移を多重にできないようにする
             sceneTransitionRights = false;
+
+            RockGenerator.hard = false;
         }
 
     }
     public void hardlDifficulty()
     {
-        if (Input.GetMouseButtonDown(0) && sceneTransitionRights == true)
+        if (sceneTransitionRights == true)
         {
             // ステージのシーンに移動する
             FadeManager.Instance.LoadScene(stageSceneName, 1);
 
             // シーン遷移を多重にできないようにする
             sceneTransitionRights = false;
+
+            RockGenerator.hard = true;
         }
 
     }
