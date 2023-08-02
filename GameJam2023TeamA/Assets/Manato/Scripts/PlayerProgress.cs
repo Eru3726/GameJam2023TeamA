@@ -10,8 +10,12 @@ public class PlayerProgress : MonoBehaviour
     [SerializeField] private float Startpos;
     [SerializeField] private float Goalpos;
     [SerializeField] private GameObject Goal;
+    [SerializeField] private Material second;
+    [SerializeField] private GameObject third;
+    [SerializeField] private GameObject ikura;
     void Start()
     {
+        third.SetActive(false);
         progressSlider.value = 0;
         if (Goal)
         {
@@ -25,5 +29,14 @@ public class PlayerProgress : MonoBehaviour
         float perMax = Goalpos - Startpos;
         float progressdis = perMax - (Goalpos - player.transform.position.z);
         progressSlider.value = progressdis / perMax;
+
+        if (progressSlider.value == 1f)
+        {
+            third.transform.position = ikura.GetComponent<Transform>().position;
+            ikura.SetActive(false);
+            third.SetActive(true);
+        }
+        else if (progressSlider.value >= 0.5f) ikura.GetComponent<MeshRenderer>().material = second;
+        
     }
 }
