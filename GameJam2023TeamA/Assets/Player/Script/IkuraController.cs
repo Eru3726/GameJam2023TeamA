@@ -177,6 +177,7 @@ public class IkuraController : MonoBehaviour
 
     private void AxisStandby()
     {
+        audioSource.Stop();
         rb.velocity = Vector3.zero;
         NowShotPower = 0;
         PowerBar.value = 0;
@@ -343,6 +344,7 @@ public class IkuraController : MonoBehaviour
 
     private void IkuraDead()
     {
+        audioSource.Stop();
         leftButton.gameObject.SetActive(false) ;
         rightButton.gameObject.SetActive(false);
         PowerBar.gameObject.SetActive(false);
