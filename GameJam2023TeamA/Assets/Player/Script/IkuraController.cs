@@ -34,6 +34,7 @@ public class IkuraController : MonoBehaviour
     [SerializeField] SphereCollider IkuraCol;
     private Rigidbody rb;
 
+    GameManager GM;
     private Animator animator;
     private int animeState=0;
 
@@ -71,6 +72,7 @@ public class IkuraController : MonoBehaviour
         DamageBar.value = IkuraHP;
         PowerBar.maxValue = MaxShotPower;
         rb = GetComponent<Rigidbody>();
+        GM = GameObject.FindObjectOfType<GameManager>();
         BackMonitorOff();
     }
 
@@ -86,6 +88,13 @@ public class IkuraController : MonoBehaviour
             MSpos += new Vector3(0, 0, -2f);
             transform.position = MSpos;
         }
+
+        // é~Ç‹Ç¡ÇƒÇ¢ÇÈä‚Ç…Ç≠Ç¡Ç¬Ç¢ÇΩÇ∆Ç´
+        if (NowIkuraState == IkuraState.Axis)
+        {
+            GM.addScoreExe();
+        }
+
         //ìÆÇ≠ä‚Ç…Ç≠Ç¡Ç¬Ç¢ÇƒÇ¢ÇÈéû
 
         if(NowIkuraState==IkuraState.Shot)
@@ -99,10 +108,12 @@ public class IkuraController : MonoBehaviour
             {
                 AxisStandby();
             }
+
+            GM.addScoreExe();
         }
         //ÉVÉáÉbÉgèÛë‘ÇÃéû
 
-        if(NowIkuraState==IkuraState.Move)
+        if (NowIkuraState==IkuraState.Move)
         {
             rb.AddForce(0, 0,RivarSpeed/50);
         }
