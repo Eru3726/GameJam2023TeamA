@@ -237,7 +237,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2eae63b99915fa74baa1d310edfebe67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameOverText: {fileID: 0}
+  causeOfDeathText: {fileID: 0}
+  valueText: {fileID: 0}
   distanceText: {fileID: 2476663109345523442}
+  scoreText: {fileID: 0}
   titleSceneName: Title
   buttons: {fileID: 2476663108107594689}
 --- !u!225 &2476663108139873144
@@ -373,7 +377,7 @@ RectTransform:
   m_GameObject: {fileID: 2476663109345523453}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9999999, y: 0.9999999, z: 0.9999999}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 2476663109472828181}
