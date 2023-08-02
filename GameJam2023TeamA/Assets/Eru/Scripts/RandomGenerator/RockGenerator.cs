@@ -70,6 +70,7 @@ public class RockGenerator : MonoBehaviour
 
     void Start()
     {
+        if (hard) HardGame();
         Application.targetFrameRate = 60;
         centerPos = (rightBorder + leftBorder) / 2;
         clPos = (centerPos + leftBorder) / 2;
@@ -136,6 +137,15 @@ public class RockGenerator : MonoBehaviour
             }
             else genePos.x = genePos.x -= 2f;
         }
+    }
+
+    private void HardGame()
+    {
+        iceProbability *= 2;
+        moveProbability *= 2;
+        poisonProbability *= 2;
+        geneDis += 2f;
+        subRock = false;
     }
 
     private void GimmickRock(GameObject rock)
