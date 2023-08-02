@@ -169,6 +169,7 @@ public class RockGenerator : MonoBehaviour
     {
         rock.GetComponent<SphereCollider>().material = this.icePhysicMaterial;
         rock.GetComponentInChildren<MeshRenderer>().material = this.iceMaterial;
+        rock.gameObject.tag = "Ice";
     }
 
     private void PoisonGimmick(GameObject rock)
