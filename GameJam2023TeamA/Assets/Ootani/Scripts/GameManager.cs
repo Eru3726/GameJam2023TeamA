@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     }
     private void Update()
     {
+        if (player == null) return;
         playerEnemyDistance = (player.transform.position.z - Enemy.transform.position.z);
 
         if (audio.clip != cautionBGM && playerEnemyDistance <= 20)
