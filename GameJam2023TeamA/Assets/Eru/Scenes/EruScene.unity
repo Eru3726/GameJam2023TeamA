@@ -270,7 +270,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 66e179bf23886fc40ad87be49ea0721d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -308,8 +308,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 749817846}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 45}
-  m_LocalScale: {x: 1, y: 1, z: 11}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -428,7 +428,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab2b3fbed43c71043ba23b1a4b640659, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RockObj: {fileID: 5714142041911996590, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
+  RockObj: {fileID: 2674235309830443632, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
+  subRock: 1
   geneDis: 4
   rightBorder: 4
   leftBorder: -4
@@ -441,6 +442,10 @@ MonoBehaviour:
   iceProbability: 20
   icePhysicMaterial: {fileID: 13400000, guid: 3ed12348e4d515a4ea45f43624f0989b, type: 2}
   iceMaterial: {fileID: 2100000, guid: d617987e8e5f20542964348c8351e69f, type: 2}
+  poisonProbability: 20
+  poisonDamage: 1
+  poisonDamageInterval: 0.1
+  poisonMaterial: {fileID: 2100000, guid: e7f656348679118488f625b4a69e7924, type: 2}
 --- !u!4 &1883500010
 Transform:
   m_ObjectHideFlags: 0
@@ -456,60 +461,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &2674235307834786405
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2674235309830443632, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
-      propertyPath: m_Name
-      value: Rock
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674235309830443634, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674235309830443634, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674235309830443634, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674235309830443634, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674235309830443634, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674235309830443634, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674235309830443634, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674235309830443634, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674235309830443634, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674235309830443634, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674235309830443634, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 494ac736d423e7943a925a5fd74e278d, type: 3}
