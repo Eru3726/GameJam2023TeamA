@@ -34,6 +34,7 @@ public class IkuraController : MonoBehaviour
     [SerializeField] SphereCollider IkuraCol;
     private Rigidbody rb;
 
+    GameManager GM;
     private Animator animator;
     private int animeState=0;
 
@@ -43,6 +44,13 @@ public class IkuraController : MonoBehaviour
     [SerializeField] private Camera mainCamera;
     [Tooltip("BackCameraをアタッチ")]
     [SerializeField] private Camera BackCamera;
+
+    [Tooltip("Audioをアタッチ")]
+    [SerializeField] private AudioSource audioSource;
+    [Tooltip("パワーチャージ音")]
+    [SerializeField] private AudioClip powerChargeSE;
+    [Tooltip("パワー決定音")]
+    [SerializeField] private AudioClip powerIgunitSE;
 
     private bool MoveStoneSwitch = false;
     public enum IkuraState
@@ -54,6 +62,8 @@ public class IkuraController : MonoBehaviour
         Wall,
     }
     private IkuraState NowIkuraState;
+
+    [SerializeField]GameManager manager;
     void Start()
     {
         startPos = transform.position;
@@ -62,6 +72,7 @@ public class IkuraController : MonoBehaviour
         DamageBar.value = IkuraHP;
         PowerBar.maxValue = MaxShotPower;
         rb = GetComponent<Rigidbody>();
+        GM = GameObject.FindObjectOfType<GameManager>();
         BackMonitorOff();
     }
 
@@ -74,9 +85,16 @@ public class IkuraController : MonoBehaviour
         if (MoveStoneSwitch)
         {
             Vector3 MSpos = MoveRock.transform.position;
-            MSpos += new Vector3(0, 0, -1.5f);
+            MSpos += new Vector3(0, 0, -2f);
             transform.position = MSpos;
         }
+
+        // 止まっている岩にくっついたとき
+        if (NowIkuraState == IkuraState.Axis)
+        {
+            GM.addScoreExe();
+        }
+
         //動く岩にくっついている時
 
         if(NowIkuraState==IkuraState.Shot)
@@ -90,10 +108,12 @@ public class IkuraController : MonoBehaviour
             {
                 AxisStandby();
             }
+
+            GM.addScoreExe();
         }
         //ショット状態の時
 
-        if(NowIkuraState==IkuraState.Move)
+        if (NowIkuraState==IkuraState.Move)
         {
             rb.AddForce(0, 0,RivarSpeed/50);
         }
@@ -138,21 +158,11 @@ public class IkuraController : MonoBehaviour
 
     private void OnCollisionEnter(Collision col)
     {
-        
-
         if (col.gameObject.tag=="Stone")
         {
-            //if(col.gameObject.GetComponent<Material>())
-            //{
-            //    if(col.gameObject.GetComponent<Material>().name=="Cyan")
-            //    {
-
-            //    }
-            //}
-
-            IkuraDamage();
+            IkuraDamage(Vector3.Distance(this.transform.position, OldPos));
             AxisStandby();
-            
+
             if (col.gameObject.GetComponent<MoveRock>())
             {
                 MoveRock = col.transform;
@@ -199,14 +209,24 @@ public class IkuraController : MonoBehaviour
 
     private void PowerChange()
     {
+        if (!audioSource.isPlaying) 
+        {
+            audioSource.PlayOneShot(powerChargeSE); 
+        }
         NowShotPower += MaxShotPower / 100;
-        if(NowShotPower>MaxShotPower){NowShotPower = 0;}
+        if(NowShotPower>MaxShotPower)
+        {
+            NowShotPower = 0;
+            audioSource.Stop();
+        }
         PowerBar.value = NowShotPower;
     }
     //発射パワーの計算
 
     private void ShotIkura()
     {
+        audioSource.Stop();
+        audioSource.PlayOneShot(powerIgunitSE);
         MoveStoneSwitch = false;
         NowIkuraState = IkuraState.Move;
         OldPos = transform.position;
@@ -215,13 +235,17 @@ public class IkuraController : MonoBehaviour
     }
     //イクラ発射
 
-    private void IkuraDamage()
+    public void IkuraDamage(float Damage)
     {
-        Vector3 NewPosZ = transform.position;
-        float damagePersent=Vector3.Distance( NewPosZ , OldPos);
-        float damage = IkuraHP / 100 * damagePersent;
+        float damage = IkuraHP / 100 * Damage;
         DamageBar.value -= damage;
-        if (DamageBar.value <= 0) Debug.Log("GameOver");
+        if (DamageBar.value <= 0)
+        {
+            Debug.Log("お前はもう死んでいるギョ…");
+            BackMonitorOff();
+            manager.eatIkura();
+            IkuraDead();
+        }
     }
     //ダメージ処理
 
@@ -310,12 +334,19 @@ public class IkuraController : MonoBehaviour
 
     private void OnTriggerEnter(Collider col)
     {
+        BackMonitorOff();
         DamageBar.value =0;
         Debug.Log("食べられちゃったギョ…");
+        manager.eatIkura();
+        IkuraDead();
     }
 
     private void IkuraDead()
     {
-
+        leftButton.gameObject.SetActive(false) ;
+        rightButton.gameObject.SetActive(false);
+        PowerBar.gameObject.SetActive(false);
+        DamageBar.gameObject.SetActive(false);
+        Destroy(gameObject);
     }
 }
